@@ -1,0 +1,56 @@
+# 演示部署：推送 main 即构建并发布到 GitHub Pages（https://<user>.github.io/Hify/）
+# 首次使用需在仓库 Settings → Pages → Build and deployment → Source 选择 "GitHub Actions"
+# 注意：这是无后端的 MSW mock 演示；正式部署走 docker-compose（见 docs/deployment.md）
+name: Deploy Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      # 无后端环境，注入 VITE_ENABLE_MSW=true 让演示站跑完整 mock 流程
+      - name: Build
+        working-directory: frontend
+        env:
+          VITE_ENABLE_MSW: 'true'
+        run: npm run build -- --base=/Hify/
+
+      # GitHub Pages 无 SPA 回退：复制一份让深层路由刷新不 404
+      - name: SPA fallback
+        working-directory: frontend
+        run: cp dist/index.html dist/404.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

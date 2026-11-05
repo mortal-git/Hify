@@ -17,7 +17,8 @@ declare module 'vue-router' {
 }
 
 const router = createRouter({
-  history: createWebHistory(),
+  // BASE_URL 跟随构建时的 base（本地 dev 为 /，GitHub Pages 构建为 /Hify/）
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',

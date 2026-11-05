@@ -104,6 +104,7 @@ docker compose up -d
 - 目录：`api/`（HTTP + SSE 封装，`api/modelgateway.ts` 即 M2、`api/knowledge.ts` 即 M5 后端契约）、`utils/`（markdown 渲染等纯函数）、`stores/`、`router/`、`views/`（Chat、AgentAdmin、KnowledgeAdmin、KbDetail、ProviderAdmin、UsageAdmin、UserAdmin）、`components/`（AppLayout 布局 + 按页面分组的子目录：`chat/` 会话列表与引用卡片；`agent/` Agent 表单 / API Key / 工具表单；`provider/` 表单弹窗；`knowledge/` 建库向导与库内页签）
 - **登录页已移除（2026-11-05）**：路由守卫在无会话时默认以 admin 自动登录，账号弹窗仅保留个人设置——iam 契约（登录/登出/me/改密）与角色逻辑完整保留；接真后端时恢复 /login 页、守卫跳转与退出登录入口
 - **后端未就绪时用 MSW mock** `/api/**`（含 SSE：ReadableStream 模拟分块输出）；main.ts 里 mock 分支带 SW 保活（visibilitychange 重发 `MOCK_ACTIVATE` + 20s 心跳，防 SW 空闲重启后请求穿透 502）；接真后端时只删 handler 与 mock 分支，不改业务代码
+- **GitHub Pages 演示站**（2026-11-05）：`.github/workflows/pages.yml` 推送 main 自动构建发布到 `github.io/Hify/`——CI 注入 `VITE_ENABLE_MSW=true`（无后端演示）+ `--base=/Hify/`（路由与 MSW 的 SW 注册均跟随 `import.meta.env.BASE_URL`），dist 复制 404.html 做 SPA 回退；正式部署仍是 docker-compose，与此无关
 - **vue-tsc 3.3.14 已知 bug**：`.vue` 的 template 区（静态属性值或绑定表达式）出现 `//` 会损坏虚拟代码生成，导致该行之后所有 `v-model` 报 "Property 'value' does not exist" 伪错误——URL 等含 `//` 的字符串必须放 script 常量（如 `ProviderFormModal.vue` 的 `urlPlaceholder`）；含真实换行/特殊字符的选项值同理（如 `CreateKbWizard.vue` 的 `separatorOptions`）
 
 ## RAG / 知识库规范

@@ -8,7 +8,11 @@ import './style.css'
 async function bootstrap(): Promise<void> {
   if (import.meta.env.VITE_ENABLE_MSW === 'true') {
     const { worker } = await import('./mocks/browser')
-    await worker.start({ onUnhandledFrame: 'bypass' })
+    await worker.start({
+      onUnhandledFrame: 'bypass',
+      // 子路径部署（GitHub Pages /Hify/）时 SW 脚本也在子路径下，默认根路径会注册失败
+      serviceWorker: { url: `${import.meta.env.BASE_URL}mockServiceWorker.js` },
+    })
 
     // SW 空闲约 30s 会被浏览器终止；重启后 activeClientIds 清空，/api 请求穿透到
     // vite 代理返回 502。MSW 自带的 5s keepalive 在后台标签页被节流到 1 次/分钟，
