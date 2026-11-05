@@ -29,6 +29,10 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
       # 无后端环境，注入 VITE_ENABLE_MSW=true 让演示站跑完整 mock 流程
       - name: Build
         working-directory: frontend
