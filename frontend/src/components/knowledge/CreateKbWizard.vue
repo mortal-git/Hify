@@ -11,6 +11,8 @@ import {
   NRadioGroup,
   NSelect,
   NSpace,
+  NStep,
+  NSteps,
   NSwitch,
   useMessage,
 } from 'naive-ui'

@@ -57,7 +57,7 @@ const activeKey = computed(() => `/${route.path.split('/')[1] ?? ''}`)
           <span class="brand-logo">
             <n-icon :component="HardwareChipOutline" :size="18" />
           </span>
-          <span class="brand-text">Hify <span class="brand-sub">智能体系统</span></span>
+          <span class="brand-text">企业智能体平台</span>
         </div>
         <n-menu
           :value="activeKey"
@@ -109,15 +109,9 @@ const activeKey = computed(() => `/${route.path.split('/')[1] ?? ''}`)
 .brand-text {
   font-size: 17px;
   font-weight: 700;
-  color: #07c05f;
+  color: #222;
   letter-spacing: 0.3px;
   white-space: nowrap;
-}
-
-.brand-sub {
-  font-size: 14px;
-  font-weight: 600;
-  color: #333;
 }
 
 .sider-foot {
